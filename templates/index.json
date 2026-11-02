@@ -1,0 +1,55 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "image_banner": {
+      "type": "image-banner",
+      "settings": {
+        "heading": "Discover our collection",
+        "show_related_images": true,
+        "related_image_limit": 5,
+        "text": "",
+        "button_label": "Shop now",
+        "button_link": "",
+        "desktop_height": 560,
+        "mobile_height": 380,
+        "content_width": 700,
+        "overlay_opacity": 20,
+        "desktop_position": "center",
+        "text_alignment": "center",
+        "background_color": "#111111",
+        "text_color": "#ffffff",
+        "button_background": "#ffffff",
+        "button_text": "#111111",
+        "block_spacing": 12
+      }
+    },
+    "featured_products": {
+      "type": "featured-products",
+      "settings": {
+        "heading": "Featured products",
+        "collection": "",
+        "show_view_all": true,
+        "view_all_label": "View all products",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "page_width": 1400,
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "heading_alignment": "flex-start",
+        "card_background": "#f5f5f5"
+      }
+    }
+  },
+  "order": [
+    "image_banner",
+    "featured_products"
+  ]
+}

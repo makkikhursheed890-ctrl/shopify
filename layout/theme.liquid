@@ -5,13 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
     {{ content_for_header }}
 </head>
 
 <body>
-    <header>this is a header</header>
+    {% section 'announcement-bar' %}
+    {% section 'header' %}
     <main> {{ content_for_layout }} </main>
-    <footer>this is a footer</footer>
+    {% section 'footer' %}
+    {% render 'theme-product-hover-script' %}
 
 </body>
 

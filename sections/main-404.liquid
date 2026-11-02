@@ -1,0 +1,65 @@
+<style>
+  .main-404 { min-height: 60vh; padding: 80px 20px; box-sizing: border-box; display: grid; place-items: center; text-align: center; }
+  .main-404__title { margin: 0 0 12px; font-size: clamp(38px,7vw,72px); }
+  .main-404__text { margin: 0 0 24px; color: #777; }
+  .main-404__button { min-height: 52px; padding: 0 24px; display: inline-flex; align-items: center; justify-content: center; background: {{ section.settings.button_background }}; color: {{ section.settings.button_text }}; font-weight: 700; text-decoration: none; }
+</style>
+<section class="main-404" {{ section.shopify_attributes }}>
+  <div>
+    {% if section.blocks.size > 0 %}
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'heading' %}
+            <h1 class="main-404__title" style="font-size: {{ block.settings.font_size }}px; color: {{ block.settings.color }};" {{ block.shopify_attributes }}>{{ block.settings.heading }}</h1>
+          {% when 'text' %}
+            <div class="main-404__text" style="font-size: {{ block.settings.font_size }}px; color: {{ block.settings.color }};" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
+          {% when 'button' %}
+            <a class="main-404__button" style="background: {{ block.settings.background }}; color: {{ block.settings.color }};" href="{{ block.settings.link | default: routes.root_url }}" {{ block.shopify_attributes }}>{{ block.settings.label }}</a>
+        {% endcase %}
+      {% endfor %}
+    {% else %}
+      <h1 class="main-404__title">{{ section.settings.heading }}</h1>
+      <p class="main-404__text">{{ section.settings.text }}</p>
+      <a class="main-404__button" href="{{ routes.root_url }}">{{ section.settings.button_label }}</a>
+    {% endif %}
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Main 404",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Page not found" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Sorry, the page you are looking for does not exist." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Back to homepage" },
+    { "type": "color", "id": "button_background", "label": "Button background", "default": "#111111" },
+    { "type": "color", "id": "button_text", "label": "Button text", "default": "#ffffff" }
+  ],
+  "blocks": [
+    { "type": "heading", "name": "Heading", "limit": 1, "settings": [
+      { "type": "text", "id": "heading", "label": "Heading", "default": "Page not found" },
+      { "type": "range", "id": "font_size", "min": 28, "max": 72, "step": 2, "unit": "px", "label": "Font size", "default": 72 },
+      { "type": "color", "id": "color", "label": "Text color", "default": "#111111" },
+      { "type": "checkbox", "id": "show_on_desktop", "label": "Show on desktop/tablet", "default": true },
+      { "type": "checkbox", "id": "show_on_mobile", "label": "Show on mobile", "default": true }
+    ]},
+    { "type": "text", "name": "Text", "limit": 1, "settings": [
+      { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Sorry, the page you are looking for does not exist.</p>" },
+      { "type": "range", "id": "font_size", "min": 12, "max": 24, "step": 1, "unit": "px", "label": "Font size", "default": 16 },
+      { "type": "color", "id": "color", "label": "Text color", "default": "#777777" },
+      { "type": "checkbox", "id": "show_on_desktop", "label": "Show on desktop/tablet", "default": true },
+      { "type": "checkbox", "id": "show_on_mobile", "label": "Show on mobile", "default": true }
+    ]},
+    { "type": "button", "name": "Button", "limit": 1, "settings": [
+      { "type": "text", "id": "label", "label": "Label", "default": "Back to homepage" },
+      { "type": "url", "id": "link", "label": "Link" },
+      { "type": "color", "id": "background", "label": "Background", "default": "#111111" },
+      { "type": "color", "id": "color", "label": "Text color", "default": "#ffffff" },
+      { "type": "checkbox", "id": "show_on_desktop", "label": "Show on desktop/tablet", "default": true },
+      { "type": "checkbox", "id": "show_on_mobile", "label": "Show on mobile", "default": true }
+    ]}
+  ],
+  "max_blocks": 3,
+  "presets": [{ "name": "Main 404", "blocks": [{ "type": "heading" }, { "type": "text" }, { "type": "button" }] }]
+}
+{% endschema %}

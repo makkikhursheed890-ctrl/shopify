@@ -1,0 +1,9 @@
+{% if heading != blank %}
+  <{{ tag | default: 'h2' }}
+    class="{{ class_name }}"
+    style="{% if font_size %}font-size: {{ font_size }}px;{% endif %}{% if color %} color: {{ color }};{% endif %}{% if alignment %} text-align: {{ alignment }};{% endif %}"
+    {{ block.shopify_attributes }}
+  >
+    {{ heading }}
+  </{{ tag | default: 'h2' }}>
+{% endif %}

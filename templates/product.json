@@ -1,0 +1,21 @@
+{
+  "sections": {
+    "main_product": {
+      "type": "main-product",
+      "settings": {
+        "page_width": 1400,
+        "desktop_gap": 56,
+        "padding_top": 40,
+        "padding_bottom": 40,
+        "button_background": "#111111",
+        "button_text": "#ffffff",
+        "show_vendor": true,
+        "show_quantity": true,
+        "show_dynamic_checkout": true
+      }
+    }
+  },
+  "order": [
+    "main_product"
+  ]
+}

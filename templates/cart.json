@@ -1,0 +1,26 @@
+{
+  "sections": {
+    "main_cart": {
+      "type": "main-cart",
+      "settings": {
+        "cart_heading": "Your cart",
+        "summary_heading": "Order summary",
+        "summary_note": "Shipping and taxes are calculated at checkout.",
+        "checkout_label": "Checkout",
+        "continue_label": "Continue shopping",
+        "empty_heading": "Your cart is empty",
+        "empty_text": "Add something you love to get started.",
+        "empty_button": "Shop products",
+        "page_width": 1400,
+        "padding_top": 40,
+        "padding_bottom": 40,
+        "border_color": "#e5e5e5",
+        "button_background": "#111111",
+        "button_text": "#ffffff"
+      }
+    }
+  },
+  "order": [
+    "main_cart"
+  ]
+}

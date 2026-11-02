@@ -1,0 +1,12 @@
+{% if label != blank %}
+  {% assign button_link = link | default: fallback_link %}
+  <a
+    class="{{ class_name }}"
+    href="{{ button_link | default: routes.root_url }}"
+    style="{% if background %}background: {{ background }};{% endif %}{% if color %}color: {{ color }};{% endif %}{% if margin_top %}margin-top: {{ margin_top }}px;{% endif %}"
+    {{ block.shopify_attributes }}
+    {% if open_in_new_tab %}target="_blank" rel="noopener"{% endif %}
+  >
+    {{ label }}
+  </a>
+{% endif %}

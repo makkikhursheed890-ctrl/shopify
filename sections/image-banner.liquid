@@ -1,0 +1,276 @@
+<style>
+  .image-banner {
+    position: relative;
+    min-height: {{ section.settings.desktop_height }}px;
+    display: grid;
+    place-items: {{ section.settings.desktop_position }};
+    overflow: hidden;
+    background: {{ section.settings.background_color }};
+    color: {{ section.settings.text_color }};
+  }
+  .image-banner__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.55s ease;
+  }
+  .image-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, {{ section.settings.overlay_opacity | divided_by: 100.0 }});
+  }
+  .image-banner__content {
+    position: relative;
+    z-index: 1;
+    max-width: {{ section.settings.content_width }}px;
+    padding: 40px 20px;
+    text-align: {{ section.settings.text_alignment }};
+  }
+  .image-banner__heading {
+    margin: 0;
+    font-size: clamp(38px, 7vw, 76px);
+    line-height: 0.98;
+  }
+  .image-banner__text {
+    margin: 18px 0 24px;
+    font-size: 18px;
+    line-height: 1.7;
+  }
+  .image-banner__button {
+    min-height: 52px;
+    padding: 0 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: {{ section.settings.button_background }};
+    color: {{ section.settings.button_text }};
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .theme-block--desktop-hidden { display: block; }
+  .theme-block__content { margin-bottom: {{ section.settings.block_spacing }}px; }
+  @media (min-width: 750px) {
+    .theme-block--mobile-hidden { display: initial; }
+    .theme-block--desktop-hidden { display: none !important; }
+  }
+  @media (max-width: 749px) {
+    .theme-block--mobile-hidden { display: none !important; }
+  }
+  @media (max-width: 749px) {
+    .image-banner {
+      min-height: {{ section.settings.mobile_height }}px;
+      place-items: center;
+    }
+    .image-banner__heading { font-size: 38px; }
+  }
+</style>
+
+<section class="image-banner" {{ section.shopify_attributes }}>
+  {% if section.settings.image %}
+    <img class="image-banner__image" src="{{ section.settings.image | image_url: width: 2000 }}" alt="{{ section.settings.image.alt | default: section.settings.heading | escape }}" width="2000" height="1000" loading="lazy">
+    <div class="image-banner__overlay"></div>
+  {% endif %}
+  {% if section.settings.show_related_images %}
+    <script type="application/json" data-image-banner-slides>
+      {
+        "interval": {{ section.settings.slideshow_interval | times: 1000 }},
+        "slides": [
+      {% if product != blank %}
+        {% for media in product.media limit: section.settings.related_image_limit %}
+          {% if media.preview_image %}
+            { "url": {{ media.preview_image | image_url: width: 2000 | json }}, "alt": {{ media.alt | default: product.title | escape | json }} }{% unless forloop.last %},{% endunless %}
+          {% endif %}
+        {% endfor %}
+      {% elsif collection != blank %}
+        {% for related_product in collection.products limit: section.settings.related_image_limit %}
+          {% if related_product.featured_media %}
+            { "url": {{ related_product.featured_media.preview_image | image_url: width: 2000 | json }}, "alt": {{ related_product.featured_media.alt | default: related_product.title | escape | json }} }{% unless forloop.last %},{% endunless %}
+          {% endif %}
+        {% endfor %}
+      {% elsif section.settings.related_collection != blank %}
+        {% for related_product in section.settings.related_collection.products limit: section.settings.related_image_limit %}
+          {% if related_product.featured_media %}
+            { "url": {{ related_product.featured_media.preview_image | image_url: width: 2000 | json }}, "alt": {{ related_product.featured_media.alt | default: related_product.title | escape | json }} }{% unless forloop.last %},{% endunless %}
+          {% endif %}
+        {% endfor %}
+      {% elsif collections.all != blank %}
+        {% for related_product in collections.all.products limit: section.settings.related_image_limit %}
+          {% if related_product.featured_media %}
+            { "url": {{ related_product.featured_media.preview_image | image_url: width: 2000 | json }}, "alt": {{ related_product.featured_media.alt | default: related_product.title | escape | json }} }{% unless forloop.last %},{% endunless %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+        ]
+      }
+    </script>
+  {% endif %}
+  <div class="image-banner__content">
+    {% if section.blocks.size > 0 %}
+      {% for block in section.blocks %}
+        {% assign desktop_hidden = '' %}
+        {% assign mobile_hidden = '' %}
+        {% unless block.settings.show_on_desktop %}{% assign desktop_hidden = ' theme-block--desktop-hidden' %}{% endunless %}
+        {% unless block.settings.show_on_mobile %}{% assign mobile_hidden = ' theme-block--mobile-hidden' %}{% endunless %}
+        <div class="theme-block__content{{ desktop_hidden }}{{ mobile_hidden }}" {{ block.shopify_attributes }}>
+          {% case block.type %}
+            {% when 'heading' %}
+              {% if block.settings.heading != blank %}<h2 class="image-banner__heading" style="font-size: {{ block.settings.font_size }}px; text-align: {{ block.settings.alignment }}; color: {{ block.settings.color }};">{{ block.settings.heading }}</h2>{% endif %}
+            {% when 'text' %}
+              {% if block.settings.text != blank %}<div class="image-banner__text" style="font-size: {{ block.settings.font_size }}px; text-align: {{ block.settings.alignment }}; color: {{ block.settings.color }};">{{ block.settings.text }}</div>{% endif %}
+            {% when 'button' %}
+              {% render 'theme-block-button',
+                block: block,
+                label: block.settings.label,
+                link: block.settings.link,
+                class_name: 'image-banner__button',
+                background: block.settings.background,
+                color: block.settings.color,
+                margin_top: block.settings.margin_top,
+                open_in_new_tab: block.settings.open_in_new_tab,
+                fallback_link: routes.root_url
+              %}
+          {% endcase %}
+        </div>
+      {% endfor %}
+    {% else %}
+      {% if section.settings.heading != blank %}<h2 class="image-banner__heading">{{ section.settings.heading }}</h2>{% endif %}
+      {% if section.settings.text != blank %}<div class="image-banner__text">{{ section.settings.text }}</div>{% endif %}
+      {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+        <a class="image-banner__button" href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a>
+      {% endif %}
+    {% endif %}
+  </div>
+</section>
+
+<script>
+  (() => {
+    const banner = document.currentScript.previousElementSibling;
+    if (!banner) return;
+    let mainImage = banner.querySelector('.image-banner__image');
+    const slidesData = banner.previousElementSibling?.matches('[data-image-banner-slides]')
+      ? banner.previousElementSibling
+      : document.querySelector('[data-image-banner-slides]');
+    if (!mainImage && slidesData) {
+      mainImage = document.createElement('img');
+      mainImage.className = 'image-banner__image';
+      mainImage.loading = 'eager';
+      banner.insertBefore(mainImage, banner.firstChild);
+      if (!banner.querySelector('.image-banner__overlay')) {
+        const overlay = document.createElement('div');
+        overlay.className = 'image-banner__overlay';
+        banner.insertBefore(overlay, banner.querySelector('.image-banner__content'));
+      }
+    }
+
+    if (!mainImage || !slidesData) return;
+
+    let slides = [];
+    let slideInterval = 5000;
+    try {
+      const slideConfig = JSON.parse(slidesData.textContent);
+      slides = slideConfig.slides || [];
+      slideInterval = Number(slideConfig.interval) || 5000;
+    } catch (error) {
+      slides = [];
+    }
+    if (slides.length < 2) return;
+
+    let currentIndex = 0;
+
+    window.setInterval(() => {
+      currentIndex = (currentIndex + 1) % slides.length;
+      mainImage.style.opacity = '0';
+      window.setTimeout(() => {
+        mainImage.src = slides[currentIndex].url;
+        mainImage.alt = slides[currentIndex].alt || '';
+        mainImage.style.opacity = '1';
+      }, 280);
+    }, slideInterval);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Image banner",
+  "tag": "section",
+  "class": "section-image-banner",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "checkbox", "id": "show_related_images", "label": "Enable automatic related-image slideshow", "default": true, "info": "Slides through current page, collection or selected homepage collection images without thumbnails." },
+    { "type": "collection", "id": "related_collection", "label": "Homepage related collection" },
+    { "type": "range", "id": "related_image_limit", "label": "Related images", "min": 2, "max": 8, "step": 1, "default": 5 },
+    { "type": "range", "id": "slideshow_interval", "label": "Slide change interval", "min": 3, "max": 15, "step": 1, "unit": "sec", "default": 5 },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Discover our collection" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop now" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "range", "id": "desktop_height", "min": 300, "max": 800, "step": 20, "unit": "px", "label": "Desktop height", "default": 560 },
+    { "type": "range", "id": "mobile_height", "min": 260, "max": 600, "step": 20, "unit": "px", "label": "Mobile height", "default": 380 },
+    { "type": "range", "id": "content_width", "min": 400, "max": 1000, "step": 20, "unit": "px", "label": "Content width", "default": 700 },
+    { "type": "range", "id": "overlay_opacity", "min": 0, "max": 80, "step": 5, "unit": "%", "label": "Overlay opacity", "default": 20 },
+    { "type": "select", "id": "desktop_position", "label": "Content position", "default": "center", "options": [
+      { "value": "center start", "label": "Left" },
+      { "value": "center", "label": "Center" },
+      { "value": "center end", "label": "Right" }
+    ] },
+    { "type": "select", "id": "text_alignment", "label": "Text alignment", "default": "center", "options": [
+      { "value": "left", "label": "Left" },
+      { "value": "center", "label": "Center" },
+      { "value": "right", "label": "Right" }
+    ] },
+    { "type": "color", "id": "background_color", "label": "Background", "default": "#111111" },
+    { "type": "color", "id": "text_color", "label": "Text", "default": "#ffffff" },
+    { "type": "color", "id": "button_background", "label": "Button background", "default": "#ffffff" },
+    { "type": "color", "id": "button_text", "label": "Button text", "default": "#111111" },
+    { "type": "range", "id": "block_spacing", "min": 0, "max": 40, "step": 4, "unit": "px", "label": "Space between content blocks", "default": 12 }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Heading",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Discover our collection" },
+        { "type": "range", "id": "font_size", "min": 28, "max": 76, "step": 2, "unit": "px", "label": "Font size", "default": 56 },
+        { "type": "color", "id": "color", "label": "Text color", "default": "#ffffff" },
+        { "type": "select", "id": "alignment", "label": "Alignment", "default": "center", "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }] },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Show on desktop/tablet", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile", "label": "Show on mobile", "default": true }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Rich text",
+      "limit": 1,
+      "settings": [
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Explore new arrivals and everyday essentials.</p>" },
+        { "type": "range", "id": "font_size", "min": 12, "max": 30, "step": 1, "unit": "px", "label": "Font size", "default": 18 },
+        { "type": "color", "id": "color", "label": "Text color", "default": "#ffffff" },
+        { "type": "select", "id": "alignment", "label": "Alignment", "default": "center", "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }] },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Show on desktop/tablet", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile", "label": "Show on mobile", "default": true }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "Button",
+      "limit": 2,
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Shop now" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "checkbox", "id": "open_in_new_tab", "label": "Open in new tab", "default": false },
+        { "type": "color", "id": "background", "label": "Background", "default": "#ffffff" },
+        { "type": "color", "id": "color", "label": "Text color", "default": "#111111" },
+        { "type": "select", "id": "alignment", "label": "Alignment", "default": "center", "options": [{ "value": "left", "label": "Left" }, { "value": "center", "label": "Center" }, { "value": "right", "label": "Right" }] },
+        { "type": "range", "id": "margin_top", "min": 0, "max": 40, "step": 4, "unit": "px", "label": "Spacing above", "default": 8 },
+        { "type": "checkbox", "id": "show_on_desktop", "label": "Show on desktop/tablet", "default": true },
+        { "type": "checkbox", "id": "show_on_mobile", "label": "Show on mobile", "default": true }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [{ "name": "Image banner", "blocks": [{ "type": "heading" }, { "type": "text" }, { "type": "button" }] }]
+}
+{% endschema %}
